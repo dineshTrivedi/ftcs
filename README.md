@@ -47,6 +47,12 @@ mpirun -np 1 ftcs
 * Dois processos:
 mpirun -np 2 ftcs
 
+Configurando chaves ssh para execução em mais máquinas
+===========================
+* Gerar um par de chaves criptográficas para permitir conexões seguras na maquina local:
+```shell
+ssh-keygen
+```
 
 Rodando Máquina da rede
 ===========================
