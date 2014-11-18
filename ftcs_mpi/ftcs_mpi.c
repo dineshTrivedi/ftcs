@@ -49,7 +49,10 @@ int main(int argc, char *argv[]) {
 
     printf("Iteracoes previstas: %g\n\n", T/dt);
 
-    x = dx*esteProc*fatorProcesso + dx;
+    // x = dx*esteProc*fatorProcesso + dx;
+    x = dx*fatorProcesso + dx;
+    printf("\nno %d/%d: x inicial: %f\n", esteProc, numProc, x);
+
     for (i=1; i<ult; i++) {
       if (x<=0.5)
           u_prev[i] = 200*x;
@@ -57,6 +60,8 @@ int main(int argc, char *argv[]) {
           u_prev[i] = 200*(1.-x);
       x += dx;
     }
+
+    printf("\nno %d/%d: x final: %f\n", esteProc, numProc, x);
 
     t = 0.;
     while (t<T) {
