@@ -57,16 +57,22 @@ Rodando Máquina da rede
 ===========================
 Criar um arquivo no formato:
 
-IP1
-IP2
+IP-maquina1
+
+IP-maquina2
+
 ...
-IPN
+
+IP-maquinaN
 
 
 * Especificar quantidade de processos em cada máquina (usar parâmetro slots no arquivo texto):
-<IP-maquina1> slots=2
-<IP-maquina2> slots=2
-<IP-maquina3> slots=2
+
+IP-maquina1 slots=2
+
+IP-maquina2 slots=2
+
+IP-maquina3 slots=2
 
 * Parâmetro -nolocal, --nolocal: Do not run any copies of the launched application on the same node as orterun is running. This option will override listing the localhost with --host or any other host-specifying mechanism.
 * Parâmetro -machinefile, --machinefile <machinefile>: Lista de hosts para executarmos
