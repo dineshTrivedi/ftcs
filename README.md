@@ -85,7 +85,7 @@ IP-maquina2 slots=2
 IP-maquina3 slots=2
 
 * Parâmetro -nolocal, --nolocal: Do not run any copies of the launched application on the same node as orterun is running. This option will override listing the localhost with --host or any other host-specifying mechanism.
-* Parâmetro -machinefile, --machinefile <machinefile>: Lista de hosts para executarmos
+* Parâmetro -machinefile, --machinefile < machinefile >: Lista de hosts para executarmos
 
 * Quatro processos:
 
