@@ -58,9 +58,51 @@ mpirun -np 2 ftcs
 Configurando chaves ssh para execução em mais máquinas
 ===========================
 
+* Verificar IP:
+```shell
+ifconfig
+```
+
 * Gerar um par de chaves criptográficas para permitir conexões seguras na maquina local:
 ```shell
 ssh-keygen
+```
+
+* Ir para o diretório padrão contendo as chaves geradas:
+```shell
+cd .ssh
+```
+
+* Copiar o conteúdo da chave pública para o arquivo "authorized_keys":
+```shell
+cat id_rsa.pub > authorized_keys
+```
+
+* Testar conexão da própria máquina, ou seja, fazer SSH para ela própria sem senha (Normalmente pede confirmação no primeiro acesso e depois permite conexão normalmente):
+```shell
+ssh <IP> ls
+```
+
+* Escolher uma maquina remota (pode ser a maquina vizinha) e repetir o procedimento acima.
+
+* Copiar autorização de/para máquina remota:
+```shell
+scp usuario@<IP-vizinho>:/home/usuario/.ssh/id_rsa.pub vizinho
+```
+
+* Anexar a chave da maquina remota a sua autorização:
+```shell
+cat vizinho >> authorized_keys
+```
+
+*  Copiar o arquivo atualizado na maquina local para a mauqina remota:
+```shell
+scp authorized_keys usuario@<IP-vizinho>:/home/usuario/.ssh/authorized_keys
+```
+
+* Testar conexão segura sem senha para o vizinho
+```shell
+ssh <IP-vizinho> ls 
 ```
 
 Rodando Máquina da rede
