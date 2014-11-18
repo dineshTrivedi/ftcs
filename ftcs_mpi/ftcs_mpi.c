@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <mpi.h>
+#include <math.h>
 
 #define tam 1.0
 #define dx 0.00001
@@ -7,47 +9,98 @@
 #define T  0.01
 #define kappa 0.000045
 
-void main(void) {
+int main(int argc, char *argv[]) {
 
-  double *tmp, *u, *u_prev;
-  double x, t;
-  long int i, n, maxloc;
+    double *tmp, *u, *u_prev, *retorno;
+    double x, t, maximo;
+    int i, tamLocal, maxloc, iproc;
+    int fatorProcesso, ult, tamTotal;
+    // retirar depois
+    int numProc = 2, esteProc = 0;
+    retorno = (double *) malloc((numProc+1)*sizeof(double));
 
-  /* Claculando quantidade de pontos */
-  n = tam/dx;
-  
-  /* Alocando vetores */
-  u = (double *) malloc((n+1)*sizeof(double));
-  u_prev = (double *) malloc((n+1)*sizeof(double));
+    MPI_Status status;
 
-  printf("Inicio: qtde=%ld, dt=%g, dx=%g, dx²=%g, kappa=%f, const=%f\n", 
-   (n+1), dt, dx, dx*dx, kappa, kappa*dt/(dx*dx));
-  printf("Iteracoes previstas: %g\n", T/dt);
+    MPI_Init(&argc,&argv);
+    MPI_Comm_size(MPI_COMM_WORLD, &numProc);
+    MPI_Comm_rank(MPI_COMM_WORLD, &esteProc);
 
-  x = dx;
-  for (i=1; i<n; i++) {
-    if (x<=0.5) u_prev[i] = 200*x;
-    else        u_prev[i] = 200*(1.-x);
-    x += dx;
-  }
+    /* Dividimos pelo numero de processos */
+    /* Claculando quantidade de pontos */
+    tamTotal = (tam/dx);
+    tamLocal = tamTotal/numProc;
+    fatorProcesso = esteProc*tamLocal;
 
-  t = 0.;
-  while (t<T) {
-    x = dx;
-    for (i=1; i<n; i++) {
-      u[i] = u_prev[i] + kappa*dt/(dx*dx)*(u_prev[i-1]-2*u_prev[i]+u_prev[i+1]);
+    if (esteProc==numProc-1) {
+      ult = tamTotal - fatorProcesso;
+    }
+    else
+      ult = floor((float)(tam/dx)/numProc);
+
+    printf("no %d/%d: fatorProcesso=%d, qtd=%d, ult=%d\n",
+       esteProc, numProc, fatorProcesso, ult, (fatorProcesso+ult));
+
+    /* Alocando vetores */
+    u = (double *) malloc((ult+1)*sizeof(double));
+    u_prev = (double *) malloc((ult+1)*sizeof(double));
+
+    printf("Inicio: qtde=%d, dt=%g, dx=%g, dx²=%g, kappa=%f, const=%f\n",
+       (ult+1), dt, dx, dx*dx, kappa, kappa*dt/(dx*dx));
+    printf("Iteracoes previstas: %g\n", T/dt);
+
+    x = dx*esteProc*fatorProcesso + dx;
+    for (i=1; i<ult; i++) {
+      if (x<=0.5)
+          u_prev[i] = 200*x;
+      else
+          u_prev[i] = 200*(1.-x);
       x += dx;
     }
-    u[0] = u[n] = 0.; /* forca condicao de contorno */
-    tmp = u_prev; u_prev = u; u = tmp; /* troca entre ponteiros */
-    t += dt;
+
+    t = 0.;
+    while (t<T) {
+      x = dx*esteProc*fatorProcesso + dx;
+      for (i=1; i<ult; i++) {
+        u[i] = u_prev[i] + kappa*dt/(dx*dx)*(u_prev[i-1]-2*u_prev[i]+u_prev[i+1]);
+        x += dx;
+      }
+      u[0] = u[ult] = 0.; /* forca condicao de contorno */
+      tmp = u_prev; u_prev = u; u = tmp; /* troca entre ponteiros */
+      t += dt;
+    }
+
+    /* Calculando o maior valor e sua localizacao */
+    maxloc = 0;
+    for (i=1; i<ult+1; i++) {
+      if (u[i] > u[maxloc]) maxloc = i;
+    }
+    printf("Maior valor u[%d] = %g\n", maxloc, u[maxloc]);
+
+    if (esteProc!=0) { /* Processos escravos */
+      MPI_Send(&u[maxloc], 1, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD);
+    }
+    else { /* Processo Mestre */
+      for(iproc=1; iproc<numProc; iproc++) {
+        MPI_Recv(&retorno[iproc], 1, MPI_DOUBLE, iproc,
+             0, MPI_COMM_WORLD, &status);
+        printf("source %d, erro %d\n", status.MPI_SOURCE, status.MPI_ERROR);
+      }
+    }
+
+    if (esteProc==0) {
+        for(iproc=0; iproc<numProc; iproc++) {
+          printf("retorno[%d]=%f\n", iproc, retorno[iproc]);
+        }
+
+        maximo = retorno[0];
+        for(i=1; i<numProc; ++i){
+            if(retorno[i] > maximo)
+                maximo = retorno[i];
+        }
+
+        printf("Max da porra toda=%f\n", maximo);
+    }
+    MPI_Finalize();
+    return 0;
   }
 
-  /* Calculando o maior valor e sua localizacao */
-  maxloc = 0;
-  for (i=1; i<n+1; i++) {
-    if (u[i] > u[maxloc]) maxloc = i;
-  }
-  printf("Maior valor u[%ld] = %g\n", maxloc, u[maxloc]);
-
-}
