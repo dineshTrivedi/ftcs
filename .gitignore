@@ -1,3 +1,4 @@
+/ftcs_serial/ftcs
 /ftcs_mpi/ftcs
 # Object files
 *.o
