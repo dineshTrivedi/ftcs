@@ -58,11 +58,8 @@ Rodando Máquina da rede
 Criar um arquivo no formato:
 
 IP1
-
 IP2
-
 ...
-
 IPN
 
 
