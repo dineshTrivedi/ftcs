@@ -56,10 +56,10 @@ ssh-keygen
 Rodando Máquina da rede
 ===========================
 Criar um arquivo no formato:
-IP-maquina1.
-IP-maquina2.
+IP1
+IP2
 ...
-IP-maquinaN.
+IPN
 
 * Especificar quantidade de processos em cada máquina (usar parâmetro slots no arquivo texto):
 <IP-maquina1> slots=2
