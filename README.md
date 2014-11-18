@@ -8,12 +8,12 @@ Código para cálculo Serial e distribuido (Utilizando MPI).
 Instalando MPI
 ==========================
 
-sudo apt-get install libcr-dev mpich2 mpich2-doc.
+sudo apt-get install libcr-dev mpich2 mpich2-doc
 
 Compilando MPI
 ==========================
 
-mpicc -o ftcs ftcs.c -lm.
+mpicc -o ftcs ftcs_mpi.c -lm
 
 Configurando QtCreator
 ==========================
@@ -49,11 +49,11 @@ Rodando Máquina Local
 
 * Um processo:
 
-mpirun -np 1 ftcs
+mpirun -np 1 ./ftcs
 
 * Dois processos:
 
-mpirun -np 2 ftcs
+mpirun -np 2 ./ftcs
 
 Configurando chaves ssh para execução em mais máquinas
 ===========================
@@ -131,11 +131,11 @@ IP-maquina3 slots=2
 
 * Quatro processos:
 
-mpirun -np 4 -nolocal -machinefile maquinas.txt ftcs
+mpirun -np 4 -nolocal -machinefile maquinas.txt ./ftcs
 
 * Oito processos:
 
-mpirun -np 8 -nolocal -machinefile maquinas.txt ftcs
+mpirun -np 8 -nolocal -machinefile maquinas.txt ./ftcs
 
 
 Referências
