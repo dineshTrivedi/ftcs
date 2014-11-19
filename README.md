@@ -40,7 +40,7 @@ QMAKE_CXXFLAGS_RELEASE += $$system(mpicxx --showme:compile) -DMPICH_IGNORE_CXX_S
 
 Add a Custom Executable run configuration and set the executable to /usr/bin/mpirun or any other path where mpirun resides on your system (run ‘which mpirun’ in a terminal to find it if you don’t know where it is). Then, set the arguments to
 
--n 2 yourexecutable
+-np 2 yourexecutable
 
 to run yourexecutable with 2 processors. Of course you’ll have to change yourexecutable to whatever your executable is named.
 
@@ -118,7 +118,7 @@ IP-maquina2
 IP-maquinaN
 
 
-* Especificar quantidade de processos em cada máquina (usar parâmetro slots no arquivo texto):
+* Especificar quantidade de processos em cada máquina (usar parâmetro slots no arquivo texto) **NAO FUNCIONOU TAMBEM**:
 
 IP-maquina1 slots=2
 
@@ -126,16 +126,16 @@ IP-maquina2 slots=2
 
 IP-maquina3 slots=2
 
-* Parâmetro -nolocal, --nolocal: Do not run any copies of the launched application on the same node as orterun is running. This option will override listing the localhost with --host or any other host-specifying mechanism.
+* Parâmetro -nolocal, --nolocal: Do not run any copies of the launched application on the same node as orterun is running. This option will override listing the localhost with --host or any other host-specifying mechanism. **(Nao funcionou esse parametro!)**
 * Parâmetro -machinefile, --machinefile < machinefile >: Lista de hosts para executarmos
 
 * Quatro processos:
 
-mpirun -np 4 -nolocal -machinefile maquinas.txt ./ftcs
+mpirun -np 4 -machinefile maquinas.txt ./ftcs
 
 * Oito processos:
 
-mpirun -np 8 -nolocal -machinefile maquinas.txt ./ftcs
+mpirun -np 8 -machinefile maquinas.txt ./ftcs
 
 
 Referências
